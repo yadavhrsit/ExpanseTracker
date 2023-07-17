@@ -5,13 +5,12 @@ async function deleteBudget(req, res) {
     try {
         const deletedBudget = await BudgetModel.findOneAndDelete({ _id: budgetId });
         if (deletedBudget) {
-            return res.status(200).json({ message: 'Budget deleted successfully' });
+            return res.status(204).json({ message: 'Budget deleted successfully' });
         } else {
             return res.status(404).json({ error: 'Budget not found' });
         }
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'An error occurred during the deletion of the budget' });
+        return res.status(500).json({ error: 'Failed to delete the budget' });
     }
 }
 

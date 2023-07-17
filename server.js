@@ -2,6 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieSession = require("cookie-session");
 
 const AuthRouter = require("./routes/authRoutes");
 const BudgetRouter = require("./routes/budgetRoutes");
@@ -12,6 +13,14 @@ const Port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(
+    cookieSession({
+        name: "expense-tracker-session",
+        keys: [process.env.SECRET],
+        httpOnly: true
+    })
+);
 
 app.use('/auth', AuthRouter);
 app.use('/budget', BudgetRouter);

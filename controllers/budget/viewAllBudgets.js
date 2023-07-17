@@ -1,14 +1,14 @@
-const budgetModel = require('../../models/budget');
+const BudgetModel = require('../../models/budget');
 
 async function viewAllBudgets(req, res) {
     try {
-        const budgets = await budgetModel.find({});
-        if (!budgets) {
-            return res.json("No Budgets found");
+        const budgets = await BudgetModel.find({});
+        if (budgets.length === 0) {
+            return res.status(404).json({ error: "No budgets found" });
         }
-        return res.json(budgets);
+        return res.status(200).json(budgets);
     } catch (error) {
-        return res.status(500).json({ error: "An error occurred during getting all the Budgets" });
+        return res.status(500).json({ error: "An error occurred while retrieving all the budgets" });
     }
 }
 

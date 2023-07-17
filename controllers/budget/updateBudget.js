@@ -2,19 +2,19 @@ const BudgetModel = require('../../models/budget');
 
 async function updateBudget(req, res) {
     try {
-        let id = req.body.id;
-        let amount = req.body.amount;
+        const { id, amount } = req.body;
+
         const budget = await BudgetModel.findById(id);
-        if (budget) {
-            budget.amount = amount;
-            await budget.save();
-            res.json('Budget Updated Successfully');
+        if (!budget) {
+            return res.status(404).json({ error: 'Budget not found' });
         }
-        else {
-            res.status(404).json({ error: "Budget not found" });
-        }
+
+        budget.amount = amount;
+        await budget.save();
+
+        return res.status(200).json({ success: 'Budget Updated Successfully' });
     } catch (err) {
-        res.status(500).json({ error: "An error occurred during the update of the budget" });
+        return res.status(500).json({ error: 'An error occurred during the update of the budget' });
     }
 }
 
