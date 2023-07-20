@@ -4,7 +4,7 @@ const router = express.Router();
 
 async function viewAllExpenses(req, res) {
     try {
-        let query = ExpenseModel.find({});
+        let query = ExpenseModel.find({ user: req.session.userId });
 
         // Sorting
         if (req.body.sort === 'true' && req.body.sortingCriteria) {

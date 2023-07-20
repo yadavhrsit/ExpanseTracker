@@ -1,33 +1,21 @@
-const UserModel = require('../../models/user');
-const bcrypt = require('bcrypt');
-require('dotenv').config();
+const passport = require('passport');
 
-async function loginUser(req, res) {
-    try {
-        const { email, password } = req.body;
-
-        const user = await UserModel.findOne({ email });
-        if (user) {
-            const result = await bcrypt.compare(password, user.password);
-            if (result) {
-                const token = jwt.sign({ id: user.id },
-                    process.env.SECRET,
-                    {
-                        algorithm: 'HS256',
-                        allowInsecureKeySizes: true,
-                        expiresIn: 9000,
-                    });
-                req.session.token = token;
-                return res.json({ success: "Login Successful" });
-            } else {
-                return res.json({ error: "Incorrect Password" });
-            }
-        } else {
-            return res.json({ error: "Email is not Registered" });
+function loginUser(req, res, next) {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return res.status(500).json({ error: "An error occurred during login", err });
         }
-    } catch (error) {
-        return res.status(500).json({ error: "An error occurred during login" });
-    }
+        if (!user) {
+            return res.json({ error: info.message });
+        }
+        req.login(user, (loginErr) => {
+            if (loginErr) {
+                return next(loginErr);
+            }
+            req.session.userId = user._id;
+            return res.status(200).json({ success: "Login Successful" });
+        });
+    })(req, res, next);
 }
 
 module.exports = loginUser;
