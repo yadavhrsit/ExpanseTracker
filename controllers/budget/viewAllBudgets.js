@@ -2,7 +2,7 @@ const BudgetModel = require('../../models/budget');
 
 async function viewAllBudgets(req, res) {
     try {
-        const budgets = await BudgetModel.find({ user: req.body.userId });
+        const budgets = await BudgetModel.find({ user: req.session.userId });
         if (budgets.length === 0) {
             return res.status(404).json({ error: "No budgets found" });
         }

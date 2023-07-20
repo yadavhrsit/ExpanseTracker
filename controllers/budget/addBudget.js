@@ -2,15 +2,13 @@ const BudgetModel = require('../../models/budget');
 
 async function addBudget(req, res) {
     try {
-        const { user, name, amount } = req.body;
+        const { name, amount } = req.body;
+        const user = req.session.userId;
         if (!name) {
             return res.status(400).json({ error: "Unable to get the required data - Name" });
         }
         if (!amount) {
             return res.status(400).json({ error: "Unable to get the required data - Amount" });
-        }
-        if (!user) {
-            return res.status(400).json({ error: "Unable to get the required data - User" });
         }
         const budget = new BudgetModel({ user, name, amount, totalExpenses: 0 });
         await budget.save()
