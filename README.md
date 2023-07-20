@@ -195,6 +195,8 @@ This application ensures the security of user passwords by encrypting them befor
 The app uses Passport.js for user authentication and supports both local email-password authentication and Google Sign-In using OAuth2. 
 To enable Google Sign-In, provide the Google Client ID and Google Client Secret in the .env file.
 </p>
+<h2>Transactions</h2>
+<p>In this application, the management of expenses is performed with a strong emphasis on data integrity and security through the use of transactions. When users interact with their expenses, such as adding or updating them, the application employs a robust transactional approach to maintain consistency and reliability in the database.</p>
 
 <h2>Session Management</h2>
 <p>The app uses Redis for session storage to enhance performance and scalability. Redis must be installed and running on the local machine.</p>
