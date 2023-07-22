@@ -141,6 +141,7 @@ Method: GET</pre>
 <p>
 This application ensures the security of user passwords by encrypting them before storing in the database. Passwords are not stored in plain text; instead, they are hashed using a strong cryptographic hashing algorithm. This approach ensures that even if the database is compromised, user passwords remain secure and cannot be easily retrieved.
 </p>
+
 <h2>Authentication</h2>
 <p>
 The app uses Passport.js for user authentication and supports both local email-password authentication and Google Sign-In using OAuth2. 
@@ -162,9 +163,14 @@ The rate limiter middleware is applied to all API endpoints to prevent excessive
 <h2>Session Management</h2>
 <p>The app uses Redis for session storage to enhance performance and scalability. Redis must be installed and running on the local machine.</p>
 
+<h2>Authorization and Security</h2>
+<p>This application utilizes session-based authorization to protect budget and expenses routes. Only logged-in users can access these routes. Unauthorized requests will receive a 401 (Unauthorized) status code.
+
+<h2>Express Validator</h2>
+<p>The APIs are integrated with express-validator, which ensures that incoming requests are properly validated. This validation helps prevent potential security vulnerabilities and enhances the reliability of the application.</p>
+
 <h2>Models</h2>
 <p>The models folder contains the User, Budget, and Expense models used to interact with the database.</p>
-
 
 <h2>Controllers</h2>
 <p>The controllers folder contains the controllers for adding, updating, viewing, and deleting budgets and expenses. These controllers are used in the respective routes for handling different API requests.</p>
