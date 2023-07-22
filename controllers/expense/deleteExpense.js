@@ -1,3 +1,4 @@
+const { validationResult, check } = require('express-validator');
 const mongoose = require('mongoose');
 const ExpenseModel = require('../../models/expense');
 const BudgetModel = require('../../models/budget');
@@ -7,6 +8,13 @@ async function deleteExpense(req, res) {
     session.startTransaction();
 
     try {
+        await check('expenseId').isMongoId().run(req);
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const { expenseId } = req.body;
         const expense = await ExpenseModel.findById(expenseId).session(session);
 

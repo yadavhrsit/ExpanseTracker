@@ -1,8 +1,21 @@
+const { validationResult, body } = require('express-validator');
 const UserModel = require('../../models/user');
 const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid'); // Import uuidv4 from uuid
+const { v4: uuidv4 } = require('uuid');
+
+// Validation checks using express-validator
+const registerUserValidation = [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('email').isEmail().withMessage('Invalid email format'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+];
 
 async function registerUser(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const { name, email, password } = req.body;
 
@@ -12,8 +25,6 @@ async function registerUser(req, res) {
         }
 
         const hash = await bcrypt.hash(password, 10);
-
-        // Generate a unique ID for googleId using uuidv4()
         const googleId = uuidv4();
 
         const user = new UserModel({
@@ -30,4 +41,4 @@ async function registerUser(req, res) {
     }
 }
 
-module.exports = registerUser;
+module.exports = { registerUser, registerUserValidation };

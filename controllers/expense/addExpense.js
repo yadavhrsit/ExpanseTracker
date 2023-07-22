@@ -1,16 +1,21 @@
+const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const BudgetModel = require('../../models/budget');
 const ExpenseModel = require('../../models/expense');
 
 async function addExpense(req, res) {
+    await body('description').notEmpty().withMessage('Description is required').run(req);
+    await body('amount').notEmpty().withMessage('Amount is required').isNumeric().withMessage('Amount must be a number').run(req);
+    await body('budgetId').notEmpty().withMessage('Budget ID is required').isMongoId().withMessage('Invalid Budget ID').run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
         const { description, amount, budgetId } = req.body;
         const user = req.session.userId;
-
-        if (!description || !amount || !budgetId) {
-            return res.status(400).json({ error: "Incomplete data received" });
-        }
-
         const session = await mongoose.startSession();
         session.startTransaction();
 
@@ -34,7 +39,6 @@ async function addExpense(req, res) {
             const newExpense = new ExpenseModel(expense);
             await newExpense.save({ session });
             await BudgetModel.findByIdAndUpdate(budgetId, { $inc: { totalExpenses: amount } }, { session });
-
             await session.commitTransaction();
             session.endSession();
 

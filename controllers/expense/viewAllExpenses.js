@@ -1,14 +1,30 @@
+const { validationResult, query } = require('express-validator');
 const ExpenseModel = require('../../models/expense');
-const express = require('express');
-const router = express.Router();
+
+const sortCriteriaValues = ['date', 'category', 'amount'];
 
 async function viewAllExpenses(req, res) {
     try {
+        await query('sort').optional().isBoolean().toBoolean().run(req);
+        await query('sortingCriteria').optional().isIn(sortCriteriaValues).run(req);
+        await query('filter').optional().isBoolean().toBoolean().run(req);
+        await query('filterCriteria.date-range').optional().isString().run(req);
+        await query('filterCriteria.category').optional().isString().run(req);
+        await query('filterCriteria.amount-range').optional().isString().run(req);
+        await query('paginate').optional().isBoolean().toBoolean().run(req);
+        await query('limit').optional().isInt().toInt().run(req);
+        await query('page').optional().isInt().toInt().run(req);
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         let query = ExpenseModel.find({ user: req.session.userId });
 
         // Sorting
-        if (req.body.sort === 'true' && req.body.sortingCriteria) {
-            const sortingCriteria = req.body.sortingCriteria;
+        if (req.query.sort === 'true' && req.query.sortingCriteria) {
+            const sortingCriteria = req.query.sortingCriteria;
             const sortOptions = {};
 
             if (sortingCriteria === 'date') {
@@ -23,8 +39,8 @@ async function viewAllExpenses(req, res) {
         }
 
         // Filtering
-        if (req.body.filter === 'true' && req.body.filterCriteria) {
-            const filterCriteria = req.body.filterCriteria;
+        if (req.query.filter === 'true' && req.query.filterCriteria) {
+            const filterCriteria = req.query.filterCriteria;
 
             if (filterCriteria['date-range']) {
                 const [startDate, endDate] = filterCriteria['date-range'].split('-');
@@ -42,10 +58,11 @@ async function viewAllExpenses(req, res) {
         }
 
         // Pagination
-        if (req.body.paginate && req.body.paginate.value === true) {
-            const limit = parseInt(req.body.paginate.limit) || 10;
-            const pageNum = parseInt(req.body.paginate.currentPage) || 1;
-            const totalEntries = await ExpenseModel.countDocuments();
+        if (req.query.paginate === 'true') {
+            const limit = parseInt(req.query.limit) || 10;
+            const pageNum = parseInt(req.query.page) || 1;
+
+            const totalEntries = await ExpenseModel.countDocuments({ user: req.session.userId });
 
             const totalPages = Math.ceil(totalEntries / limit);
             const skip = (pageNum - 1) * limit;

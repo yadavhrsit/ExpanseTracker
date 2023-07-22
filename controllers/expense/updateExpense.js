@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const ExpenseModel = require('../../models/expense');
 const BudgetModel = require('../../models/budget');
@@ -8,6 +9,26 @@ async function updateExpense(req, res) {
 
     try {
         const { expenseId, description = null, amount = null, budgetId = null } = req.body;
+
+        await check('expenseId').isMongoId().run(req);
+        await check('amount').optional().isNumeric().toFloat().run(req);
+        await check('budgetId').optional().isMongoId().run(req);
+
+        await check('description')
+            .optional()
+            .custom((value) => {
+                const wordCount = value.trim().split(/\s+/).length;
+                if (wordCount > 100) {
+                    throw new Error('Description should be maximum 100 words');
+                }
+                return true;
+            })
+            .run(req);
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
         const expense = await ExpenseModel.findById(expenseId).session(session);
         if (!expense) {
@@ -21,17 +42,19 @@ async function updateExpense(req, res) {
             expense.budgetId = budgetId;
         }
 
-        if (expense.amount != null && expense.amount !== amount) {
+        if (amount != null && expense.amount !== amount) {
             const newAmount = amount - expense.amount;
             expense.amount = amount;
 
-            const budget = await BudgetModel.findById(budgetId).session(session);
-            if (!budget) {
-                return res.status(404).json({ error: "Budget not found" });
-            }
+            if (budgetId) {
+                const budget = await BudgetModel.findById(budgetId).session(session);
+                if (!budget) {
+                    return res.status(404).json({ error: "Budget not found" });
+                }
 
-            budget.totalExpenses += newAmount;
-            await budget.save();
+                budget.totalExpenses += newAmount;
+                await budget.save();
+            }
         }
 
         await expense.save();
