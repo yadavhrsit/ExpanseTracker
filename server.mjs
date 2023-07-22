@@ -21,6 +21,9 @@ app.use(helmet.contentSecurityPolicy({
         defaultSrc: ["'self'"],
     },
     reportOnly: false,
+    xContentTypeOptions: true,
+    frameguard: { action: 'sameorigin' },
+    xssFilter: true
 }));
 
 app.use(bodyParser.json());
@@ -32,7 +35,7 @@ app.use(
         secret: process.env.SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: { secure: false, httpOnly: false, maxAge: 1000 * 60 * 30 },
+        cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 30 },
     })
 );
 
