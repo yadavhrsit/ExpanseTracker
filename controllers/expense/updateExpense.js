@@ -7,28 +7,30 @@ async function updateExpense(req, res) {
     session.startTransaction();
 
     try {
-        const { expenseId, description, amount, date, categoryId } = req.body;
+        const { expenseId, description = null, amount = null, budgetId = null } = req.body;
 
         const expense = await ExpenseModel.findById(expenseId).session(session);
         if (!expense) {
             return res.status(404).json({ error: "Expense not found" });
         }
 
-        if (expense.amount !== amount) {
+        if (description != null) {
+            expense.description = description;
+        }
+        if (budgetId != null) {
+            expense.budgetId = budgetId;
+        }
+
+        if (expense.amount != null && expense.amount !== amount) {
             const newAmount = amount - expense.amount;
             expense.amount = amount;
 
-            const budget = await BudgetModel.findById(categoryId).session(session);
+            const budget = await BudgetModel.findById(budgetId).session(session);
             if (!budget) {
                 return res.status(404).json({ error: "Budget not found" });
             }
 
             budget.totalExpenses += newAmount;
-
-            expense.description = description;
-            expense.date = date;
-            expense.categoryId = categoryId;
-
             await budget.save();
         }
 

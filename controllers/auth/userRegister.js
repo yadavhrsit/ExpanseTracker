@@ -1,5 +1,6 @@
 const UserModel = require('../../models/user');
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid'); // Import uuidv4 from uuid
 
 async function registerUser(req, res) {
     try {
@@ -11,16 +12,21 @@ async function registerUser(req, res) {
         }
 
         const hash = await bcrypt.hash(password, 10);
+
+        // Generate a unique ID for googleId using uuidv4()
+        const googleId = uuidv4();
+
         const user = new UserModel({
             name,
             email,
-            password: hash
+            password: hash,
+            googleId,
         });
 
         await user.save();
         return res.status(201).json({ success: "User Registration Successful" });
     } catch (error) {
-        return res.status(500).json({ error: "An error occurred during user registration" });
+        return res.status(500).json({ error: "An error occurred during user registration", error });
     }
 }
 

@@ -10,9 +10,9 @@ const viewBudget = require('../controllers/budget/viewBudget');
 const isAuthorized = require('../middlewares/isAuthenticated');
 
 Router.post('/add', isAuthorized, addBudget);
-Router.post('/update', isAuthorized, updateBudget);
-Router.post('/delete', isAuthorized, deleteBudget);
-Router.post('/viewall', isAuthorized, viewAllBudgets);
-Router.post('/view', isAuthorized, viewBudget);
+Router.patch('/update', isAuthorized, updateBudget);
+Router.delete('/delete', isAuthorized, deleteBudget);
+Router.get('/viewall', isAuthorized, viewAllBudgets);
+Router.get('/view', isAuthorized, viewBudget);
 
 module.exports = Router;

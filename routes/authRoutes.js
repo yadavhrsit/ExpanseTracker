@@ -7,6 +7,6 @@ const LogoutUser = require('../controllers/auth/userLogOut');
 
 Router.post('/register', RegisterUser);
 Router.post('/login', LoginUser);
-Router.post('/logout', LogoutUser);
+Router.get('/logout', LogoutUser);
 
 module.exports = Router;

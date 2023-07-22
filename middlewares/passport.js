@@ -29,7 +29,7 @@ passport.use(new LocalStrategy(
 
 passport.use(new GoogleStrategy(
     {
-        clientID: "66090628916-2kuadtd1l6hvbs093g0a4mvbt9d8mbd0.apps.googleusercontent.com",
+        clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: '/auth/google/callback',
     },
@@ -44,6 +44,8 @@ passport.use(new GoogleStrategy(
                 });
                 await user.save();
             }
+            user.googleId = profile.id;
+            await user.save();
             return done(null, user);
         } catch (error) {
             return done(error);

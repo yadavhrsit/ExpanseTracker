@@ -10,9 +10,9 @@ const viewExpense = require('../controllers/expense/viewExpense');
 const isAuthorized = require('../middlewares/isAuthenticated');
 
 Router.post('/add', isAuthorized, addExpense);
-Router.post('/update', isAuthorized, updateExpense);
-Router.post('/delete', isAuthorized, deleteExpense);
-Router.post('/viewall', isAuthorized, viewAllExpenses);
-Router.post('/view', isAuthorized, viewExpense);
+Router.patch('/update', isAuthorized, updateExpense);
+Router.delete('/delete', isAuthorized, deleteExpense);
+Router.get('/viewall', isAuthorized, viewAllExpenses);
+Router.get('/view', isAuthorized, viewExpense);
 
 module.exports = Router;

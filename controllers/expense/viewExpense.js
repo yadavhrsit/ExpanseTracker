@@ -2,7 +2,7 @@ const ExpenseModel = require('../../models/expense');
 
 async function viewExpense(req, res) {
     try {
-        const { expenseId } = req.body;
+        const expenseId = req.params.expenseId;
         const expense = await ExpenseModel.findById(expenseId);
         if (!expense) {
             return res.status(404).json({ error: "Expense not found" });
