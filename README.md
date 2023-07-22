@@ -15,8 +15,12 @@ git clone https://github.com/yadavhrsit/ExpanseTracker-Backend
 ```
 npm install
 ```
+<p>3. Install and Start Redis:</p>
+Make sure to install Redis on your local machine. You can download and install Redis from the official website: https://redis.io/download
 
-<p>3. Set up environment variables:</p>
+After installation, start the Redis server.
+
+<p>4. Set up environment variables:</p>
 Create a .env file in the root directory and add the following environment variables:
 
 
@@ -28,164 +32,111 @@ GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 ```
 
-<p>4. Project Directory</p>
+<p>5. Project Directory</p>
 
 ```
 cd ExpanseTracker-Backend
 ```
 
-<p>5. Start the server:</p>
+<p>6. Start the server:</p>
 
 ```
 npm start
 ```
 
 <h2>API Endpoints:</h2>
-
 <h3>Auth Routes</h3>
-
 <pre><b>Register a new user</b>
 URL: /auth/register
 Method: POST
-Request Body:</pre>
-<pre>
+Request Body:
 {
+  "name": "Your Name",
   "email": "user@example.com",
   "password": "your-password"
 }
 </pre>
-
 <pre><b>Login with existing user</b>
 URL: /auth/login
 Method: POST
-Request Body:</pre>
-<pre>
+Request Body:
 {
   "email": "user@example.com",
   "password": "your-password"
 }
 </pre>
-
 <pre><b>Logout</b>
 URL: /auth/logout
-Method: POST</pre>
-
+Method: GET</pre>
 <h3>Budget Routes</h3>
-
 <pre><b>Add a new budget</b>
 URL: /budget/add
 Method: POST
-Request Body:</pre>
-<pre>
+Request Body:
 {
   "name": "Monthly Expenses",
   "amount": 1000
 }
 </pre>
-
 <pre><b>Update an existing budget</b>
 URL: /budget/update
-Method: POST
-Request Body:</pre>
-<pre>
+Method: PATCH
+Request Body:
 {
   "id": "budget-id",
   "amount": 1200
 }
 </pre>
-
 <pre><b>Delete a budget</b>
 URL: /budget/delete
-Method: POST
-Request Body:</pre>
-<pre>
+Method: DELETE
+Request Body:
 {
   "budgetId": "budget-id"
 }
 </pre>
-
 <pre><b>View all budgets</b>
 URL: /budget/viewall
 Method: GET</pre>
-
 <pre><b>View a specific budget</b>
-URL: /budget/view
-Method: POST
-Request Body:</pre>
-<pre>
-{
-  "id": "budget-id"
-}
-</pre>
-
+URL: /budget/view/:budgetId
+Method: GET</pre>
 <h3>Expense Routes</h3>
-
 <pre><b>Add a new expense</b>
 URL: /expense/add
 Method: POST
-Request Body:</pre>
-<pre>
+Request Body:
 {
   "description": "Grocery Shopping",
   "amount": 50,
   "budgetId": "budget-id"
 }
 </pre>
-
 <pre><b>Update an existing expense</b>
 URL: /expense/update
-Method: POST
-Request Body:</pre>
-<pre>
+Method: PATCH
+Request Body:
 {
   "expenseId": "expense-id",
   "description": "Grocery Shopping",
   "amount": 60,
-  "date": "2023-07-20",
-  "categoryId": "category-id"
+  "budgetId": "new-budget-id"
 }
 </pre>
-
 <pre><b>Delete an expense</b>
 URL: /expense/delete
-Method: POST
-Request Body:</pre>
-<pre>
+Method: DELETE
+Request Body:
 {
   "expenseId": "expense-id"
 }
 </pre>
-
 <pre><b>View all expenses</b>
 URL: /expense/viewall
-Method: POST
-Request Body:</pre>
-<pre>
-{
-  "paginate": {
-    "value": true,
-    "limit": 10,
-    "currentPage": 1
-  },
-  "sortingCriteria": "date",
-  "filter": "true",
-  "filterCriteria": {
-    "date-range": "2023-07-01-2023-07-20",
-    "category": "Groceries",
-    "amount-range": "0-100"
-  }
-}
-</pre>
-
+Method: GET</pre>
 <pre><b>View a specific expense</b>
-URL: /expense/view
-Method: POST
-Request Body:</pre>
-<pre>
-{
-  "expenseId": "expense-id"
-}
-</pre>
+URL: /expense/view/:expenseId
+Method: GET</pre>
 <h2>User Password Encryption:</h2>
 <p>
 This application ensures the security of user passwords by encrypting them before storing in the database. Passwords are not stored in plain text; instead, they are hashed using a strong cryptographic hashing algorithm. This approach ensures that even if the database is compromised, user passwords remain secure and cannot be easily retrieved.
