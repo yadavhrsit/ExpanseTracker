@@ -195,6 +195,16 @@ This application ensures the security of user passwords by encrypting them befor
 The app uses Passport.js for user authentication and supports both local email-password authentication and Google Sign-In using OAuth2. 
 To enable Google Sign-In, provide the Google Client ID and Google Client Secret in the .env file.
 </p>
+
+<h2>Rate Limiter</h2>
+<p>The server implements rate limiting to protect against abuse and ensure fair usage of the API. The rate limiter has the following configuration:</p>
+
+- `windowMs`: 15 minutes
+- `max`: 100 requests per 15 minutes
+
+This means that each IP address is limited to 100 requests within a 15-minute window. If a user exceeds the request limit, they will receive a 429 (Too Many Requests) status code for subsequent requests within the window.
+The rate limiter middleware is applied to all API endpoints to prevent excessive requests and enhance the server's security and performance.
+
 <h2>Transactions</h2>
 <p>In this application, the management of expenses is performed with a strong emphasis on data integrity and security through the use of transactions. When users interact with their expenses, such as adding or updating them, the application employs a robust transactional approach to maintain consistency and reliability in the database.</p>
 
