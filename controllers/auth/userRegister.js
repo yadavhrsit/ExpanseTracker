@@ -3,7 +3,6 @@ const UserModel = require('../../models/user');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
-// Validation checks using express-validator
 const registerUserValidation = [
     body('name').notEmpty().withMessage('Name is required'),
     body('email').isEmail().withMessage('Invalid email format'),
@@ -19,11 +18,6 @@ async function registerUser(req, res) {
     try {
         const { name, email, password } = req.body;
 
-        const existingUser = await UserModel.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "User already registered with this email" });
-        }
-
         const hash = await bcrypt.hash(password, 10);
         const googleId = uuidv4();
 
@@ -35,9 +29,9 @@ async function registerUser(req, res) {
         });
 
         await user.save();
-        return res.status(201).json({ success: "User Registration Successful" });
+        return res.status(201).json({ message: "User Registration Successful" });
     } catch (error) {
-        return res.status(500).json({ error: "An error occurred during user registration", error });
+        return res.status(500).json({ message: "An error occurred during user registration", error });
     }
 }
 

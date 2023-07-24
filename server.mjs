@@ -6,15 +6,19 @@ import session from 'express-session';
 import passport from './middlewares/passport.js';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
 import AuthRouter from './routes/authRoutes.js';
 import BudgetRouter from './routes/budgetRoutes.js';
 import ExpenseRouter from './routes/expenseRoutes.js';
+import UtilRoutesNoAuth from './routes/utilRoutes.js';
 
 const app = express();
 const Port = process.env.PORT || 3000;
+
+app.use(cors());
 
 app.use(helmet.contentSecurityPolicy({
     directives: {
@@ -35,7 +39,7 @@ app.use(
         secret: process.env.SECRET,
         resave: false,
         saveUninitialized: false,
-        cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 30 },
+        cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 },
     })
 );
 
@@ -55,6 +59,8 @@ app.use('/expense', limiter);
 app.use('/auth', AuthRouter);
 app.use('/budget', BudgetRouter);
 app.use('/expense', ExpenseRouter);
+
+app.use('/utils', UtilRoutesNoAuth);
 
 app.get('/', (req, res) => {
     res.send('Server is Working');

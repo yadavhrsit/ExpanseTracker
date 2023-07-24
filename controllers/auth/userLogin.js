@@ -24,7 +24,8 @@ function loginUser(req, res, next) {
                 return next(loginErr);
             }
             req.session.userId = user._id;
-            return res.status(200).json({ success: "Login Successful" });
+            req.session.userName = user.name;
+            return res.status(200).json({ message: "Login Successful" });
         });
     })(req, res, next);
 }
