@@ -29,7 +29,7 @@ passport.use(new LocalStrategy(
 
 passport.use(new GoogleStrategy(
     {
-        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientID: '66090628916-2kuadtd1l6hvbs093g0a4mvbt9d8mbd0.apps.googleusercontent.com',
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: '/auth/google/callback',
     },

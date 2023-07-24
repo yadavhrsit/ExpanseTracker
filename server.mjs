@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import { connectToDatabase, connectToRedis, redisStore } from './db.mjs';
 import session from 'express-session';
 import passport from './middlewares/passport.js';
@@ -18,7 +19,13 @@ import UtilRoutesNoAuth from './routes/utilRoutes.js';
 const app = express();
 const Port = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: ["POST", "GET", "DELETE", "PUT", "PATCH", "OPTIONS"],
+    allowedHeaders:
+        "Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept, x-access-token",
+}));
 
 app.use(helmet.contentSecurityPolicy({
     directives: {
@@ -29,7 +36,7 @@ app.use(helmet.contentSecurityPolicy({
     frameguard: { action: 'sameorigin' },
     xssFilter: true
 }));
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -38,7 +45,7 @@ app.use(
         store: redisStore,
         secret: process.env.SECRET,
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 },
     })
 );
