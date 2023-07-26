@@ -9,15 +9,15 @@ const loginUserValidation = [
 function loginUser(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ isError: errors.array() });
     }
 
     passport.authenticate('local', (err, user, info) => {
         if (err) {
-            return res.status(500).json({ error: "An error occurred during login", err });
+            return res.status(500).json({ isError: "An error occurred during login", err });
         }
         if (!user) {
-            return res.json({ error: info.message });
+            return res.json({ isError: info.isError });
         }
         req.login(user, (loginErr) => {
             if (loginErr) {
