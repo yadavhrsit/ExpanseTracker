@@ -7,7 +7,13 @@ let redisClient;
 let redisStore;
 
 async function connectToRedis() {
-    redisClient = createClient();
+    redisClient = createClient({
+        password: process.env.REDISPASS,
+        socket: {
+            host: process.env.REDISHOST,
+            port: 13811
+        }
+    });
     redisClient.on('error', err => console.log('Redis Client Error', err));
     await redisClient.connect().then(() => {
         console.log("Redis server is Running and Connected to Database");
