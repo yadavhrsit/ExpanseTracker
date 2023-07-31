@@ -22,6 +22,6 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "start": "nodemon server.mjs"
+    "start": "node server.mjs"
   }
 }
