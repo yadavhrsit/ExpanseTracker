@@ -10,6 +10,8 @@
     "express-rate-limit": "^6.8.0",
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.4.0",
@@ -22,7 +24,7 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "start": "node server.mjs",
-    "vercel-build": "Hello Vercel"
+    "start": "node index.js",
+    "deploy": "firebase deploy --only functions:et"
   }
 }
