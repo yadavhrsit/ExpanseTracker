@@ -22,6 +22,7 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "vercel-build": "Hello Vercel"
   }
 }
