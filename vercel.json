@@ -1,0 +1,16 @@
+{
+    "version": 1,
+    "builds": [
+        {
+            "src": "./server.mjs",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
+    ],
+    "installCommand": "npm install"
+}

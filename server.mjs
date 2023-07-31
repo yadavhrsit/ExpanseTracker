@@ -18,9 +18,16 @@ import UtilRoutesNoAuth from './routes/utilRoutes.js';
 
 const app = express();
 const Port = process.env.PORT || 3000;
+const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.7:3000'];
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ["POST", "GET", "DELETE", "PUT", "PATCH", "OPTIONS"],
     allowedHeaders:
