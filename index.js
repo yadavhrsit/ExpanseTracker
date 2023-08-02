@@ -1,4 +1,6 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -9,6 +11,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const functions = require('firebase-functions');
 
+
 dotenv.config();
 
 const AuthRouter = require('./routes/authRoutes.js');
@@ -17,22 +20,28 @@ const ExpenseRouter = require('./routes/expenseRoutes.js');
 const UtilRoutesNoAuth = require('./routes/utilRoutes.js');
 
 const app = express();
-const Port = 3000;
+const Port = 8000;
 const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.7:3000'];
 
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ["POST", "GET", "DELETE", "PUT", "PATCH", "OPTIONS"],
-    allowedHeaders:
-        "Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept, x-access-token",
-}));
+app.set('trust proxy', 1);
+
+app.use(cors(
+
+    {
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true,
+        methods: ["POST", "GET", "DELETE", "PUT", "PATCH", "OPTIONS"],
+        allowedHeaders:
+            "Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept, x-access-token",
+    }
+
+));
 
 app.use(helmet.contentSecurityPolicy({
     directives: {
@@ -47,7 +56,25 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+mongoose.connect(process.env.DB).then(() => {
+    console.log("MongoDB Connected")
+}).catch(() => {
+    console.log("MongoDB Failed to connect");
+})
 
+app.use(express.urlencoded({ extended: false }));
+app.use(
+    session({
+        store: new MongoStore({ mongoUrl: process.env.DB }),
+        secret: process.env.SECRET,
+        resave: false,
+        saveUninitialized: true,
+
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -69,29 +96,11 @@ app.get('/', (req, res) => {
     res.send('Server is Working');
 });
 
-const loadDatabase = async () => {
-    const { connectToDatabase, connectToRedis, redisStore } = await import('./db.mjs');
-    app.use(
-        session({
-            store: redisStore,
-            secret: process.env.SECRET,
-            resave: false,
-            saveUninitialized: true,
-            cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 30 },
-        })
-    );
 
-    app.use(passport.initialize());
-    app.use(passport.session());
-    connectToDatabase().then(() => {
-        connectToRedis().then(() => {
-            app.listen(Port, () => {
-                console.log(`Server Started on Port ${Port}`);
-            });
-        });
-    });
-};
 
-loadDatabase();
+
+app.listen(Port, () => {
+    console.log(`Server Started on Port ${Port}`);
+});
 
 module.exports.api = functions.https.onRequest(app);

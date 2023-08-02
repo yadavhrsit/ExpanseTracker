@@ -12,15 +12,15 @@ async function viewAllExpenses(req, res) {
         await query('filterCriteria.category').optional().isString().run(req);
         await query('filterCriteria.amount-range').optional().isString().run(req);
         await query('paginate').optional().isBoolean().toBoolean().run(req);
-        await query('limit').optional().isInt().toInt().run(req);
-        await query('page').optional().isInt().toInt().run(req);
+        await query('limit').optional().isInt().run(req);
+        await query('page').optional().isInt().run(req);
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        let query = ExpenseModel.find({ user: req.session.userId });
+        let expenseQuery = ExpenseModel.find({ user: req.session.userId });
 
         // Sorting
         if (req.query.sort === 'true' && req.query.sortingCriteria) {
@@ -35,7 +35,7 @@ async function viewAllExpenses(req, res) {
                 sortOptions.amount = 1;
             }
 
-            query = query.sort(sortOptions);
+            expenseQuery = expenseQuery.sort(sortOptions);
         }
 
         // Filtering
@@ -44,32 +44,32 @@ async function viewAllExpenses(req, res) {
 
             if (filterCriteria['date-range']) {
                 const [startDate, endDate] = filterCriteria['date-range'].split('-');
-                query = query.where('date').gte(new Date(startDate)).lte(new Date(endDate));
+                expenseQuery = expenseQuery.where('date').gte(new Date(startDate)).lte(new Date(endDate));
             }
 
             if (filterCriteria.category) {
-                query = query.where('category').equals(filterCriteria.category);
+                expenseQuery = expenseQuery.where('category').equals(filterCriteria.category);
             }
 
             if (filterCriteria['amount-range']) {
                 const [minAmount, maxAmount] = filterCriteria['amount-range'].split('-');
-                query = query.where('amount').gte(minAmount).lte(maxAmount);
+                expenseQuery = expenseQuery.where('amount').gte(parseInt(minAmount, 10)).lte(parseInt(maxAmount, 10));
             }
         }
 
         // Pagination
         if (req.query.paginate === 'true') {
-            const limit = parseInt(req.query.limit) || 10;
-            const pageNum = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit, 10) || 10;
+            const pageNum = parseInt(req.query.page, 10) || 1;
 
             const totalEntries = await ExpenseModel.countDocuments({ user: req.session.userId });
 
             const totalPages = Math.ceil(totalEntries / limit);
             const skip = (pageNum - 1) * limit;
 
-            query = query.skip(skip).limit(limit);
+            expenseQuery = expenseQuery.skip(skip).limit(limit);
 
-            const expenses = await query;
+            const expenses = await expenseQuery;
 
             return res.status(200).json({
                 expenses: expenses,
@@ -78,7 +78,7 @@ async function viewAllExpenses(req, res) {
             });
         }
 
-        const expenses = await query;
+        const expenses = await expenseQuery;
 
         if (expenses.length === 0) {
             return res.status(404).json({ error: "No Expenses found" });

@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator');
+const { validationResult, query } = require('express-validator');
 const BudgetModel = require('../../models/budget');
 
 async function viewAllBudgets(req, res) {

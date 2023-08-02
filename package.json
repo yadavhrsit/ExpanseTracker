@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "connect-mongo": "^5.0.0",
     "connect-redis": "^7.1.0",
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.0.0",
@@ -13,7 +14,9 @@
     "firebase-admin": "^11.10.1",
     "firebase-functions": "^4.4.1",
     "helmet": "^7.0.0",
+    "ioredis": "^5.3.2",
     "jsonwebtoken": "^9.0.1",
+    "mongodb": "^5.7.0",
     "mongoose": "^7.4.0",
     "passport": "^0.6.0",
     "passport-google-oauth": "^2.0.0",
