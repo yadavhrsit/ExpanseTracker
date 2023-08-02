@@ -65,11 +65,15 @@ mongoose.connect(process.env.DB).then(() => {
 app.use(express.urlencoded({ extended: false }));
 app.use(
     session({
-        store: new MongoStore({ mongoUrl: process.env.DB }),
+        store: new MongoStore({
+            mongoUrl: process.env.DB,
+            touchAfter: 0.12 * 60 * 60,
+            ttl: 0.25 * 60 * 60
+        }),
         secret: process.env.SECRET,
         resave: false,
-        saveUninitialized: true,
-
+        saveUninitialized: false,
+        autoRemove: 'native',
     })
 );
 
