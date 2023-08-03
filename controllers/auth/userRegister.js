@@ -17,7 +17,10 @@ async function registerUser(req, res) {
 
     try {
         const { name, email, password } = req.body;
-
+        name = name.split(' ')
+            .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
+            .join(' ');
+        email = email.toLowerCase();
         const hash = await bcrypt.hash(password, 10);
         const googleId = uuidv4();
 

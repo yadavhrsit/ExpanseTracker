@@ -10,6 +10,7 @@ passport.use(new LocalStrategy(
         usernameField: 'email',
     },
     async (email, password, done) => {
+        email = email.toLowerCase();
         try {
             const user = await UserModel.findOne({ email });
             if (!user) {

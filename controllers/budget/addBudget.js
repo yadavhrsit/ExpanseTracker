@@ -10,14 +10,16 @@ async function addBudget(req, res) {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
         const { name, amount } = req.body;
+        name = name.split(' ')
+            .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
+            .join(' ');
         const user = req.session.userId;
         const budget = new BudgetModel({ user, name, amount, totalExpenses: 0 });
         await budget.save();
         return res.status(201).json({ success: 'Budget Added Successfully' });
     } catch (err) {
-        return res.status(500).json({ error: "An error occurred during the addition of the budget" });
+        return res.status(500).json({ error: "An error occurred during the addition of the budget", err });
     }
 }
 
