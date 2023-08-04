@@ -11,9 +11,6 @@ async function addBudget(req, res) {
             return res.status(400).json({ errors: errors.array() });
         }
         const { name, amount } = req.body;
-        name = name.split(' ')
-            .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
-            .join(' ');
         const user = req.session.userId;
         const budget = new BudgetModel({ user, name, amount, totalExpenses: 0 });
         await budget.save();
