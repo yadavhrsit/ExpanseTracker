@@ -12,7 +12,7 @@ async function addBudget(req, res) {
         }
         const { name, amount } = req.body;
         const user = req.session.userId;
-        const budget = new BudgetModel({ user, name, amount, totalExpenses: 0 });
+        const budget = new BudgetModel({ user, name, amount });
         await budget.save();
         return res.status(201).json({ success: 'Budget Added Successfully' });
     } catch (err) {

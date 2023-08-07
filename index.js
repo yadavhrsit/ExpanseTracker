@@ -11,7 +11,6 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const functions = require('firebase-functions');
 
-
 dotenv.config();
 
 const AuthRouter = require('./routes/authRoutes.js');
@@ -26,7 +25,6 @@ const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.7:3000'];
 app.set('trust proxy', 1);
 
 app.use(cors(
-
     {
         origin: (origin, callback) => {
             if (!origin || allowedOrigins.includes(origin)) {
@@ -68,7 +66,7 @@ app.use(
         store: new MongoStore({
             mongoUrl: process.env.DB,
             touchAfter: 0.12 * 60 * 60,
-            ttl: 0.25 * 60 * 60
+            ttl: 1 * 60 * 60
         }),
         secret: process.env.SECRET,
         resave: false,

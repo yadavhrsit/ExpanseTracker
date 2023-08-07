@@ -22,16 +22,11 @@ async function deleteExpense(req, res) {
             return res.status(404).json({ error: "Expense not found" });
         }
 
-        const { categoryId, amount } = expense;
-
-        await BudgetModel.findByIdAndUpdate(categoryId, { $inc: { totalExpenses: -amount } }, { session });
-
         await ExpenseModel.deleteOne({ _id: expenseId }).session(session);
 
         await session.commitTransaction();
         session.endSession();
-
-        return res.status(200).json({ success: 'Expense Deleted Successfully' });
+        return res.status(204).json({ success: 'Expense Deleted Successfully' });
     } catch (error) {
         await session.abortTransaction();
         session.endSession();

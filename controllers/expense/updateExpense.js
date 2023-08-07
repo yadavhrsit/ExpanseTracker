@@ -1,4 +1,4 @@
-const { validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const ExpenseModel = require('../../models/expense');
 const BudgetModel = require('../../models/budget');
@@ -6,14 +6,9 @@ const BudgetModel = require('../../models/budget');
 async function updateExpense(req, res) {
     const session = await mongoose.startSession();
     session.startTransaction();
-
     try {
-        const { expenseId, description = null, amount = null, budgetId = null } = req.body;
-
-        await check('expenseId').isMongoId().run(req);
+        const { expenseId, description, amount, budgetId } = req.body;
         await check('amount').optional().isNumeric().toFloat().run(req);
-        await check('budgetId').optional().isMongoId().run(req);
-
         await check('description')
             .optional()
             .custom((value) => {
@@ -34,31 +29,24 @@ async function updateExpense(req, res) {
         if (!expense) {
             return res.status(404).json({ error: "Expense not found" });
         }
-
         if (description != null) {
             expense.description = description;
         }
-        if (budgetId != null) {
-            expense.budgetId = budgetId;
-        }
-
         if (amount != null && expense.amount !== amount) {
-            const newAmount = amount - expense.amount;
             expense.amount = amount;
-
-            if (budgetId) {
-                const budget = await BudgetModel.findById(budgetId).session(session);
-                if (!budget) {
-                    return res.status(404).json({ error: "Budget not found" });
-                }
-
-                budget.totalExpenses += newAmount;
-                await budget.save();
+        }
+        if (budgetId) {
+            const newBudgetToAssign = await BudgetModel.findById(budgetId).session(session);
+            if (!newBudgetToAssign) {
+                return res.status(404).json({ error: "Budget not found" });
+            }
+            if (budgetId !== expense.budgetId) {
+                expense.budgetId = await budgetId;
+                expense.category = newBudgetToAssign.name;
             }
         }
 
         await expense.save();
-
         await session.commitTransaction();
         session.endSession();
 
@@ -66,7 +54,7 @@ async function updateExpense(req, res) {
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
-        return res.status(500).json({ error: "An error occurred during updating the Expense" });
+        return res.status(500).json({ 'error-': "An error occurred during updating the Expense", error });
     }
 }
 

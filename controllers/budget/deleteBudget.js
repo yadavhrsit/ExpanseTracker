@@ -2,7 +2,6 @@ const { body, validationResult } = require('express-validator');
 const BudgetModel = require('../../models/budget');
 
 async function deleteBudget(req, res) {
-    console.log(req.body.id);
     await body('id').notEmpty().withMessage('Budget ID is required').isMongoId().withMessage('Invalid Budget ID').run(req);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

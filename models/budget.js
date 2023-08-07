@@ -5,7 +5,6 @@ const Budget = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true, unique: true },
     amount: { type: Number, required: true },
-    totalExpenses: Number,
 });
 const budgetModel = mongoose.model('Budget', Budget);
 
