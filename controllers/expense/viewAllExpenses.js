@@ -79,11 +79,6 @@ async function viewAllExpenses(req, res) {
         }
 
         const expenses = await expenseQuery;
-
-        if (expenses.length === 0) {
-            return res.status(200).json({ error: "No Expenses found" });
-        }
-
         return res.status(200).json(expenses);
     } catch (error) {
         return res.status(500).json({ error: "An error occurred during getting all the Expenses" });

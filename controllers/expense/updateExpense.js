@@ -33,6 +33,14 @@ async function updateExpense(req, res) {
             expense.description = description;
         }
         if (amount != null && expense.amount !== amount) {
+            const budget = await BudgetModel.findById(budgetId).session(session);
+            const allExpensesInBudget = await ExpenseModel.find({ budgetId }).session(session);
+            const cumulativeTotal = allExpensesInBudget.reduce((total, expense) => total + expense.amount, 0);
+            if (budget.amount - cumulativeTotal < amount) {
+                await session.abortTransaction();
+                session.endSession();
+                return res.status(400).json({ error: "Expense exceeds the Budget" });
+            }
             expense.amount = amount;
         }
         if (budgetId) {

@@ -15,11 +15,6 @@ async function viewAllBudgets(req, res) {
         const skip = (page - 1) * limit;
 
         const budgets = await BudgetModel.find({ user: req.session.userId }).skip(skip).limit(limit);
-
-        if (budgets.length === 0) {
-            return res.status(200).json({ error: "No budgets found" });
-        }
-
         return res.status(200).json(budgets);
     } catch (error) {
         return res.status(500).json({ error: "An error occurred while retrieving all the budgets" });
