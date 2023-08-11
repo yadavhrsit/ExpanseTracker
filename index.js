@@ -20,26 +20,16 @@ const UtilRoutesNoAuth = require('./routes/utilRoutes.js');
 
 const app = express();
 const Port = 8000;
-const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.7:3000'];
 
 app.set('trust proxy', 1);
 
-app.use(cors(
-    {
-        origin: (origin, callback) => {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
-        credentials: true,
-        methods: ["POST", "GET", "DELETE", "PUT", "PATCH", "OPTIONS"],
-        allowedHeaders:
-            "Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept, x-access-token",
-    }
-
-));
+app.use(cors({
+    origin: true,
+    credentials: true,
+    methods: ["POST", "GET", "DELETE", "PUT", "PATCH", "OPTIONS"],
+    allowedHeaders:
+        "Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept, x-access-token",
+}));
 
 app.use(helmet.contentSecurityPolicy({
     directives: {

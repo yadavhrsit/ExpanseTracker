@@ -10,13 +10,14 @@ const registerUserValidation = [
 ];
 
 async function registerUser(req, res) {
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
     try {
-        const { name, email, password } = req.body;
+        let { name, email, password } = req.body;
         name = name.split(' ')
             .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
             .join(' ');
@@ -34,6 +35,7 @@ async function registerUser(req, res) {
         await user.save();
         return res.status(201).json({ message: "User Registration Successful" });
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: "An error occurred during user registration", error });
     }
 }
