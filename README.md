@@ -161,7 +161,7 @@ The rate limiter middleware is applied to all API endpoints to prevent excessive
 <p>In this application, the management of expenses is performed with a strong emphasis on data integrity and security through the use of transactions. When users interact with their expenses, such as adding or updating them, the application employs a robust transactional approach to maintain consistency and reliability in the database.</p>
 
 <h2>Session Management</h2>
-<p>The app uses Redis for session storage to enhance performance and scalability. Redis must be installed and running on the local machine.</p>
+<p>The app uses MongoDB for session storage to enhance performance and scalability. Session data is now stored in the same MongoDB database as other application data.</p>
 
 <h2>Authorization and Security</h2>
 <p>This application utilizes session-based authorization to protect budget and expenses routes. Only logged-in users can access these routes. Unauthorized requests will receive a 401 (Unauthorized) status code.
@@ -177,3 +177,4 @@ The rate limiter middleware is applied to all API endpoints to prevent excessive
 
 <h2>Database</h2>
 <p>The app connects to a MongoDB database. Make sure to provide the MongoDB connection string in the .env file.</p>
+
