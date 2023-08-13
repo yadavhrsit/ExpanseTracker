@@ -55,12 +55,16 @@ app.use(
         store: new MongoStore({
             mongoUrl: process.env.DB,
             touchAfter: 0.12 * 60 * 60,
-            ttl: 1 * 60 * 60
+            ttl: 1 * 60 * 60,
         }),
         secret: process.env.SECRET,
         resave: false,
         saveUninitialized: false,
         autoRemove: 'native',
+        cookie: {
+            sameSite: 'none',
+            secure: true
+        }
     })
 );
 
