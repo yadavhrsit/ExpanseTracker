@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
-// const helmet = require('helmet');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -31,15 +31,15 @@ app.use(cors({
         "Origin, X-Requested-With, X-AUTHENTICATION, X-IP, Content-Type, Accept, x-access-token",
 }));
 
-// app.use(helmet.contentSecurityPolicy({
-//     directives: {
-//         defaultSrc: ["'self'"],
-//     },
-//     reportOnly: false,
-//     xContentTypeOptions: true,
-//     frameguard: { action: 'sameorigin' },
-//     xssFilter: true
-// }));
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+    },
+    reportOnly: false,
+    xContentTypeOptions: true,
+    frameguard: { action: 'sameorigin' },
+    xssFilter: true
+}));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
