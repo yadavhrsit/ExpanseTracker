@@ -9,7 +9,6 @@ const passport = require('./middlewares/passport.js');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const functions = require('firebase-functions');
 
 dotenv.config();
 
@@ -19,7 +18,7 @@ const ExpenseRouter = require('./routes/expenseRoutes.js');
 const UtilRoutesNoAuth = require('./routes/utilRoutes.js');
 
 const app = express();
-const Port = 8000;
+const Port = process.env.PORT || 8000;
 
 app.set('trust proxy', 1);
 
@@ -89,10 +88,7 @@ app.get('/', (req, res) => {
 });
 
 
-
-
 app.listen(Port, () => {
     console.log(`Server Started on Port ${Port}`);
 });
 
-module.exports.api = functions.https.onRequest(app);
