@@ -2,6 +2,15 @@
 
 <p id="description">This repository contains the backend code for an Expense Tracker application. The server is built using Node.js and Express.js and utilizes MongoDB as the database. The app provides functionality to manage budgets and expenses and requires user authentication to access certain routes. The app also supports session management using Redis for better scalability.</p>
 
+## Test Credentials
+
+To explore you can use the following test credentials:
+
+- **Email:** testuser@test.com
+- **Password:** Pass@123
+
+Feel free to sign in using these credentials to experience the platform's functionalities without creating a new account.
+
 <h2>🛠️ Installation Steps:</h2>
 
 <p>1. Clone the repository to your local machine:</p>
